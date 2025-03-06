@@ -1,11 +1,13 @@
 package com.example.demo4.controller;
+
+import com.example.demo4.dto.UserDTO;
 import com.example.demo4.model.User;
 import com.example.demo4.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/users")
@@ -16,20 +18,18 @@ public class UserController {
 
     // GET all users
     @GetMapping
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
-    }
-
-    // GET user by ID
-    @GetMapping("/{id}")
-    public Optional<User> getUserById(@PathVariable Long id) {
-        return userRepository.findById(id);
+    public List<UserDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(user -> new UserDTO(user.getName(), user.getSalary()))
+                .collect(Collectors.toList());
     }
 
     // POST create a new user
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        return userRepository.save(user);
+    public UserDTO createUser(@RequestBody UserDTO userDTO) {
+        User user = new User(userDTO.getName(), userDTO.getSalary());
+        user = userRepository.save(user);
+        return new UserDTO(user.getName(), user.getSalary());
     }
 
     // PUT update an existing user
@@ -39,7 +39,7 @@ public class UserController {
                 .orElseThrow(() -> new RuntimeException("User not found with id " + id));
 
         user.setName(userDetails.getName());
-        user.setEmail(userDetails.getEmail());
+        user.setSalary(userDetails.getSalary());
 
         return userRepository.save(user);
     }
@@ -51,5 +51,3 @@ public class UserController {
         return "User deleted successfully with id " + id;
     }
 }
-
-

@@ -1,31 +1,14 @@
-package com.example.demo4.model;
+package com.example.demo4.dto;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "users")
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+public class UserDTO {
     private String name;
     private double salary;
 
-    public User() {}
+    public UserDTO() {}
 
-    public User(String name, double salary) {
+    public UserDTO(String name, double salary) {
         this.name = name;
         this.salary = salary;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
     }
 
     public String getName() {
