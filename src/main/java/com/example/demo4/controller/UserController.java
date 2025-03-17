@@ -34,19 +34,23 @@ public class UserController {
 
     // PUT update an existing user
     @PutMapping("/{id}")
-    public User updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+    public UserDTO updateUser(@PathVariable Long id, @RequestBody UserDTO userDTO) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found with id " + id));
 
-        user.setName(userDetails.getName());
-        user.setSalary(userDetails.getSalary());
+        user.setName(userDTO.getName());
+        user.setSalary(userDTO.getSalary());
 
-        return userRepository.save(user);
+        user = userRepository.save(user);
+        return new UserDTO(user.getName(), user.getSalary());
     }
 
     // DELETE user by ID
     @DeleteMapping("/{id}")
     public String deleteUser(@PathVariable Long id) {
+        if (!userRepository.existsById(id)) {
+            throw new RuntimeException("User not found with id " + id);
+        }
         userRepository.deleteById(id);
         return "User deleted successfully with id " + id;
     }
